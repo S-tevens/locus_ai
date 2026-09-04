@@ -72,3 +72,50 @@ Four independently runnable pieces, wired together over HTTP and WebSocket:
 ### Tech stack
 
 Python, FastAPI, Pydantic, scikit-learn, WebSockets, React, Vite, Leaflet
+
+## Running the Project
+
+### Prerequisites
+
+- Python 3.9+ with `pip`
+- Node.js 18+ with `npm`
+
+HOW TO RUN:
+###Everything runs locally — no external services or API keys required.
+
+### 1. Backend (FastAPI inference API)
+
+```
+bash
+cd backend
+pip install fastapi uvicorn pydantic websockets scikit-learn
+uvicorn main:app --reload --port 8000
+```
+### 2. Frontend (Locus AI live dashboard)
+```
+bash
+cd frontend
+npm install
+npm run dev
+
+Open http://localhost:5173. It connects to the backend's /ws feed
+automatically and will show "no data yet" until the simulator starts
+sending traffic.
+```
+
+###3. 3. Simulator (drives live traffic through the pipeline)
+```
+bash
+cd simulator
+pip install requests
+python simulate.py --interval 0.6 --shuffle --loop
+
+--interval 0.6 paces events at a readable ~1.6/sec (lower it for a
+denser feed, raise it for a slower one)
+--shuffle randomizes row order instead of streaming the CSV in its
+original (heavily label-clustered) order
+--loop restarts from the beginning once the dataset is exhausted, so it
+runs indefinitely
+Run only one instance at a time — a second one streaming
+concurrently will double the event rate into the same backend
+```
